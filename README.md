@@ -1,3 +1,12 @@
+----
+# Polyfrost fork with additional fields for [OneClient](https://github.com/Polyfrost/OneLauncher)
+
+Get builds via [GitHub Actions](https://github.com/Polyfrost/packwiz/actions) or [nightly.link](https://nightly.link/Polyfrost/packwiz/workflows/go/main)
+
+See [this file](https://github.com/Polyfrost/packwiz/blob/main/format.md) to see roughly what the format looks like.
+
+----
+
 # packwiz
 packwiz is a command line tool for creating Minecraft modpacks. Instead of managing JAR files directly, packwiz creates TOML metadata files which can be easily version-controlled and shared with git (see an example pack [here](https://github.com/packwiz/packwiz-example-pack)). You can then [export it to a CurseForge or Modrinth modpack](https://packwiz.infra.link/tutorials/hosting/curseforge/), or [use packwiz-installer](https://packwiz.infra.link/tutorials/installing/packwiz-installer/) for an auto-updating MultiMC instance.
 
