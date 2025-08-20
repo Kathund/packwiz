@@ -7,9 +7,8 @@ import (
 	"path/filepath"
 	"slices"
 	"strings"
+	"unicode"
 
-	"github.com/fatih/camelcase"
-	"github.com/igorsobreira/titlecase"
 	"github.com/packwiz/packwiz/cmdshared"
 	"github.com/packwiz/packwiz/core"
 	"github.com/spf13/cobra"
@@ -31,31 +30,41 @@ var initCmd = &cobra.Command{
 			os.Exit(1)
 		}
 
+		wd, err := os.Getwd()
+		if err != nil {
+			fmt.Printf("Error getting current working directory: %s\n", err)
+			os.Exit(1)
+		}
+		category := filepath.Base(wd)                                                                             // "Performance"
+		mcVersionName := CapitalizeFirstLetterOnly(strings.ReplaceAll(filepath.Base(filepath.Dir(wd)), "-", " ")) // "1.8.9 Forge")
+
 		name, err := cmd.Flags().GetString("name")
 		if err != nil || len(name) == 0 {
 			// Get current file directory name
-			wd, err := os.Getwd()
-			directoryName := "."
-			if err == nil {
-				directoryName = filepath.Base(wd)
-			}
-			if directoryName != "." && len(directoryName) > 0 {
-				// Turn directory name into a space-seperated proper name
-				name = titlecase.Title(strings.ReplaceAll(strings.ReplaceAll(strings.Join(camelcase.Split(directoryName), " "), " - ", " "), " _ ", " "))
-				name = initReadValue("Modpack name ["+name+"]: ", name)
-			} else {
-				name = initReadValue("Modpack name: ", "")
-			}
+			name = "OneClient " + mcVersionName + " [" + category + "]"
+			name = initReadValue("Modpack name ["+name+"]: ", name)
+		}
+
+		readCategory, err := cmd.Flags().GetString("category")
+		if err != nil || len(readCategory) == 0 {
+			category = initReadValue("Category ["+category+"]: ", category)
+		} else if err == nil && len(readCategory) > 0 {
+			category = readCategory
 		}
 
 		author, err := cmd.Flags().GetString("author")
 		if err != nil || len(author) == 0 {
-			author = initReadValue("Author: ", "")
+			author = "Polyfrost"
 		}
 
 		version, err := cmd.Flags().GetString("version")
 		if err != nil || len(version) == 0 {
 			version = initReadValue("Version [1.0.0]: ", "1.0.0")
+		}
+
+		enabled, err := cmd.Flags().GetBool("enabled")
+		if err != nil {
+			enabled = strings.EqualFold(initReadValue("Enabled true by default [false]: ", "false"), "true")
 		}
 
 		mcVersions, err := cmdshared.GetValidMCVersions()
@@ -67,22 +76,16 @@ var initCmd = &cobra.Command{
 		mcVersion := viper.GetString("init.mc-version")
 		if len(mcVersion) == 0 {
 			var latestVersion string
-			if viper.GetBool("init.snapshot") {
-				latestVersion = mcVersions.Latest.Snapshot
-			} else {
-				latestVersion = mcVersions.Latest.Release
-			}
-			if viper.GetBool("init.latest") {
-				mcVersion = latestVersion
-			} else {
-				mcVersion = initReadValue("Minecraft version ["+latestVersion+"]: ", latestVersion)
-			}
+			latestVersion = strings.Split(mcVersionName, " ")[0]
+			fmt.Println("Latest version: " + latestVersion)
+			mcVersion = latestVersion
 		}
 		mcVersions.CheckValid(mcVersion)
 
 		modLoaderName := strings.ToLower(viper.GetString("init.modloader"))
 		if len(modLoaderName) == 0 {
-			modLoaderName = strings.ToLower(initReadValue("Mod loader [quilt]: ", "quilt"))
+			modLoaderName = strings.ToLower(strings.Split(mcVersionName, " ")[1])
+			fmt.Println("Mod loader: " + modLoaderName)
 		}
 
 		loader, ok := core.ModLoaders[modLoaderName]
@@ -146,6 +149,11 @@ var initCmd = &cobra.Command{
 			Author:     author,
 			Version:    version,
 			PackFormat: core.CurrentPackFormat,
+			PolyFormat: "1",
+			Enabled:    enabled,
+			Category:   category,
+			Id:         strings.ToLower(category) + "-" + filepath.Base(filepath.Dir(wd)),
+			UpdateUrl:  "oneclient/generated/" + strings.ToLower(category) + "-" + filepath.Base(filepath.Dir(wd)),
 			Index: struct {
 				File       string `toml:"file"`
 				HashFormat string `toml:"hash-format"`
@@ -238,4 +246,15 @@ func initReadValue(prompt string, def string) string {
 		return value
 	}
 	return def
+}
+
+func CapitalizeFirstLetterOnly(s string) string {
+	r := []rune(s)
+	for i, ch := range r {
+		if unicode.IsLetter(ch) {
+			r[i] = unicode.ToUpper(ch)
+			break
+		}
+	}
+	return string(r)
 }

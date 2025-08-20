@@ -21,7 +21,14 @@ type Pack struct {
 	Version     string `toml:"version,omitempty"`
 	Description string `toml:"description,omitempty"`
 	PackFormat  string `toml:"pack-format"`
-	Index       struct {
+	// POLYFROST ADDED FIELDS START NOW
+	PolyFormat string `toml:"poly-format"`
+	Enabled    bool   `toml:"enabled"`
+	Category   string `toml:"category"`
+	Id         string `toml:"id"`
+	UpdateUrl  string `toml:"update-url"`
+	// POLYFROST ADDED FIELDS END
+	Index struct {
 		// Path is stored in forward slash format relative to pack.toml
 		File       string `toml:"file"`
 		HashFormat string `toml:"hash-format"`

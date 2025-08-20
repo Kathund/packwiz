@@ -20,6 +20,10 @@ var exportCmd = &cobra.Command{
 	Short: "Export the current modpack into a .zip for curseforge",
 	Args:  cobra.NoArgs,
 	Run: func(cmd *cobra.Command, args []string) {
+		fmt.Println("--------------")
+		fmt.Println("THIS WILL NOT EXPORT WITH ONECLIENT'S ADDED FIELDS!")
+		fmt.Println("PLEASE DM WYVEST ON DISCORD IF YOU NEED THIS FEATURE!")
+		fmt.Println("--------------")
 		side := viper.GetString("curseforge.export.side")
 		if side != core.UniversalSide && side != core.ServerSide && side != core.ClientSide {
 			fmt.Printf("Invalid side %q, must be one of client, server, or both (default)\n", side)

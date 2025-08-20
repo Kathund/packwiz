@@ -209,6 +209,11 @@ var exportCmd = &cobra.Command{
 			VersionID:     pack.Version,
 			Name:          pack.Name,
 			Summary:       pack.Description,
+			Enabled:       pack.Enabled,
+			Id:            pack.Id,
+			Category:      pack.Category,
+			PolyFormat:    pack.PolyFormat,
+			UpdateUrl:     pack.UpdateUrl,
 			Files:         manifestFiles,
 			Dependencies:  dependencies,
 		}

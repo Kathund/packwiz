@@ -1,13 +1,19 @@
 package modrinth
 
 type Pack struct {
-	FormatVersion uint32            `json:"formatVersion"`
-	Game          string            `json:"game"`
-	VersionID     string            `json:"versionId"`
-	Name          string            `json:"name"`
-	Summary       string            `json:"summary,omitempty"`
-	Files         []PackFile        `json:"files"`
-	Dependencies  map[string]string `json:"dependencies"`
+	FormatVersion uint32 `json:"formatVersion"`
+	Game          string `json:"game"`
+	VersionID     string `json:"versionId"`
+	Name          string `json:"name"`
+	Summary       string `json:"summary,omitempty"`
+	// POLYFROST ADDED FIELDS START NOW
+	Enabled      bool              `json:"enabled"`
+	Id           string            `json:"id"`
+	Category     string            `json:"category"`
+	PolyFormat   string            `json:"polyFormat"`
+	UpdateUrl    string            `json:"updateUrl"`
+	Files        []PackFile        `json:"files"`
+	Dependencies map[string]string `json:"dependencies"`
 }
 
 type PackFile struct {
