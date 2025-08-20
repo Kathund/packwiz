@@ -177,52 +177,56 @@ func getPathForFile(gameID uint32, classID uint32, categoryID uint32, slug strin
 }
 
 func createModFile(modInfo modInfo, fileInfo modFileInfo, index *core.Index, optionalDisabled bool) error {
-	updateMap := make(map[string]map[string]interface{})
-	var err error
+	return errors.New("not supported on Polyfrost fork of packwiz. If you want this functionality, please DM wyvest on Discord")
+	/*
+		updateMap := make(map[string]map[string]interface{})
+		var err error
 
-	updateMap["curseforge"], err = cfUpdateData{
-		ProjectID: modInfo.ID,
-		FileID:    fileInfo.ID,
-	}.ToMap()
-	if err != nil {
-		return err
-	}
-
-	hash, hashFormat := fileInfo.getBestHash()
-
-	var optional *core.ModOption
-	if optionalDisabled {
-		optional = &core.ModOption{
-			Optional: true,
-			Default:  false,
+		updateMap["curseforge"], err = cfUpdateData{
+			ProjectID: modInfo.ID,
+			FileID:    fileInfo.ID,
+		}.ToMap()
+		if err != nil {
+			return err
 		}
-	}
 
-	modMeta := core.Mod{
-		Name:     modInfo.Name,
-		FileName: fileInfo.FileName,
-		Side:     core.UniversalSide,
-		Download: core.ModDownload{
-			HashFormat: hashFormat,
-			Hash:       hash,
-			Mode:       core.ModeCF,
-		},
-		Option: optional,
-		Update: updateMap,
-	}
-	path := modMeta.SetMetaPath(getPathForFile(modInfo.GameID, modInfo.ClassID, modInfo.PrimaryCategoryID, modInfo.Slug))
+		hash, hashFormat := fileInfo.getBestHash()
 
-	// If the file already exists, this will overwrite it!!!
-	// TODO: Should this be improved?
-	// Current strategy is to go ahead and do stuff without asking, with the assumption that you are using
-	// VCS anyway.
+		var optional *core.ModOption
+		if optionalDisabled {
+			optional = &core.ModOption{
+				Optional: true,
+				Default:  false,
+			}
+		}
 
-	format, hash, err := modMeta.Write()
-	if err != nil {
-		return err
-	}
+		modMeta := core.Mod{
+			Name:     modInfo.Name,
+			FileName: fileInfo.FileName,
+			Side:     core.UniversalSide,
+			Download: core.ModDownload{
+				HashFormat: hashFormat,
+				Hash:       hash,
+				Mode:       core.ModeCF,
+			},
+			Option: optional,
+			Update: updateMap,
+		}
+		path := modMeta.SetMetaPath(getPathForFile(modInfo.GameID, modInfo.ClassID, modInfo.PrimaryCategoryID, modInfo.Slug))
 
-	return index.RefreshFileWithHash(path, format, hash, true)
+		// If the file already exists, this will overwrite it!!!
+		// TODO: Should this be improved?
+		// Current strategy is to go ahead and do stuff without asking, with the assumption that you are using
+		// VCS anyway.
+
+		format, hash, err := modMeta.Write()
+		if err != nil {
+			return err
+		}
+
+		return index.RefreshFileWithHash(path, format, hash, true)
+
+	*/
 }
 
 func getSearchLoaderType(pack core.Pack) modloaderType {

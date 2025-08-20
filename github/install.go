@@ -1,6 +1,7 @@
 package github
 
 import (
+	"bufio"
 	"encoding/json"
 	"errors"
 	"fmt"
@@ -8,6 +9,7 @@ import (
 	"os"
 	"path/filepath"
 	"regexp"
+	"strings"
 
 	"github.com/dlclark/regexp2"
 	"github.com/packwiz/packwiz/core"
@@ -172,10 +174,17 @@ func installRelease(repo Repo, release Release, regex string, pack core.Pack) er
 		return err
 	}
 
+	id := initReadValue("Id ["+repo.Name+"]", repo.Name)
+	enabled := strings.ToLower(initReadValue("Enabled [true]", "true"))
+	hidden := strings.ToLower(initReadValue("Hidden [false]", "false"))
+
 	modMeta := core.Mod{
 		Name:     repo.Name,
 		FileName: file.Name,
 		Side:     core.UniversalSide,
+		Id:       id,
+		Enabled:  enabled == "true",
+		Hidden:   hidden == "true",
 		Download: core.ModDownload{
 			URL:        file.BrowserDownloadURL,
 			HashFormat: "sha256",
@@ -229,4 +238,23 @@ func init() {
 
 	installCmd.Flags().StringVar(&branchFlag, "branch", "", "The GitHub repository branch to retrieve releases for")
 	installCmd.Flags().StringVar(&regexFlag, "regex", "", "The regular expression to match releases against")
+}
+
+func initReadValue(prompt string, def string) string {
+	fmt.Print(prompt)
+	if viper.GetBool("non-interactive") {
+		fmt.Printf("%s\n", def)
+		return def
+	}
+	value, err := bufio.NewReader(os.Stdin).ReadString('\n')
+	if err != nil {
+		fmt.Printf("Error reading input: %s\n", err)
+		os.Exit(1)
+	}
+	// Trims both CR and LF
+	value = strings.TrimSpace(strings.TrimRight(value, "\r\n"))
+	if len(value) > 0 {
+		return value
+	}
+	return def
 }

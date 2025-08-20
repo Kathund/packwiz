@@ -13,7 +13,12 @@ import (
 
 // Mod stores metadata about a mod. This is written to a TOML file for each mod.
 type Mod struct {
-	metaFile string      // The file for the metadata file, used as an ID
+	metaFile string // The file for the metadata file, used as an ID
+	//POLYFROST ADDED FIELDS START NOW
+	Id      string `toml:"id"`      // OneClient-facing ID
+	Enabled bool   `toml:"enabled"` // Whether the mod is enabled or not
+	Hidden  bool   `toml:"hidden"`  // Whether the mod is hidden in the UI
+	//POLYFROST ADDED FIELDS END
 	Name     string      `toml:"name"`
 	FileName string      `toml:"filename"`
 	Side     string      `toml:"side,omitempty"`

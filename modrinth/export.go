@@ -159,6 +159,9 @@ var exportCmd = &cobra.Command{
 						Client string `json:"client"`
 						Server string `json:"server"`
 					}{Client: clientEnv, Server: serverEnv},
+					Id:        dl.Mod.Id,
+					Enabled:   dl.Mod.Enabled,
+					Hidden:    dl.Mod.Hidden,
 					Downloads: []string{u},
 					FileSize:  uint32(fileSize),
 				})

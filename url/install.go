@@ -1,6 +1,7 @@
 package url
 
 import (
+	"bufio"
 	"fmt"
 	"github.com/packwiz/packwiz/core"
 	"github.com/spf13/cobra"
@@ -69,10 +70,21 @@ var installCmd = &cobra.Command{
 		}
 
 		filename := path.Base(dl.Path)
+
+		id := initReadValue("ID:", "")
+		if id == "" {
+			fmt.Println("You must specify an ID for the mod.")
+			os.Exit(1)
+		}
+		enabled := strings.ToLower(initReadValue("Enabled [true]", "true"))
+		hidden := strings.ToLower(initReadValue("Hidden [false]", "false"))
 		modMeta := core.Mod{
 			Name:     args[0],
 			FileName: filename,
 			Side:     core.UniversalSide,
+			Id:       id,
+			Enabled:  enabled == "true",
+			Hidden:   hidden == "true",
 			Download: core.ModDownload{
 				URL:        args[1],
 				HashFormat: "sha256",
@@ -151,4 +163,23 @@ func init() {
 
 	installCmd.Flags().Bool("force", false, "Add a file even if the download URL is supported by packwiz in an alternative command (which may support dependencies and updates)")
 	installCmd.Flags().String("meta-name", "", "Filename to use for the created metadata file (defaults to a name generated from the name you supply)")
+}
+
+func initReadValue(prompt string, def string) string {
+	fmt.Print(prompt)
+	if viper.GetBool("non-interactive") {
+		fmt.Printf("%s\n", def)
+		return def
+	}
+	value, err := bufio.NewReader(os.Stdin).ReadString('\n')
+	if err != nil {
+		fmt.Printf("Error reading input: %s\n", err)
+		os.Exit(1)
+	}
+	// Trims both CR and LF
+	value = strings.TrimSpace(strings.TrimRight(value, "\r\n"))
+	if len(value) > 0 {
+		return value
+	}
+	return def
 }

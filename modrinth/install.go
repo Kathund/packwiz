@@ -1,6 +1,7 @@
 package modrinth
 
 import (
+	"bufio"
 	"errors"
 	"fmt"
 	"os"
@@ -400,6 +401,9 @@ func installVersion(project *modrinthApi.Project, version *modrinthApi.Version, 
 func createFileMeta(project *modrinthApi.Project, version *modrinthApi.Version, file *modrinthApi.File, pack core.Pack, index *core.Index) error {
 	updateMap := make(map[string]map[string]interface{})
 
+	enabled := strings.ToLower(initReadValue("Enabled [true]", "true"))
+	hidden := strings.ToLower(initReadValue("Hidden [false]", "false"))
+
 	var err error
 	updateMap["modrinth"], err = mrUpdateData{
 		ProjectID:        *project.ID,
@@ -424,6 +428,9 @@ func createFileMeta(project *modrinthApi.Project, version *modrinthApi.Version, 
 		Name:     *project.Title,
 		FileName: *file.Filename,
 		Side:     side,
+		Id:       *project.ID,
+		Enabled:  enabled == "true",
+		Hidden:   hidden == "true",
 		Download: core.ModDownload{
 			URL:        *file.URL,
 			HashFormat: algorithm,
@@ -467,4 +474,23 @@ func init() {
 	installCmd.Flags().StringVar(&projectIDFlag, "project-id", "", "The Modrinth project ID to use")
 	installCmd.Flags().StringVar(&versionIDFlag, "version-id", "", "The Modrinth version ID to use")
 	installCmd.Flags().StringVar(&versionFilenameFlag, "version-filename", "", "The Modrinth version filename to use")
+}
+
+func initReadValue(prompt string, def string) string {
+	fmt.Print(prompt)
+	if viper.GetBool("non-interactive") {
+		fmt.Printf("%s\n", def)
+		return def
+	}
+	value, err := bufio.NewReader(os.Stdin).ReadString('\n')
+	if err != nil {
+		fmt.Printf("Error reading input: %s\n", err)
+		os.Exit(1)
+	}
+	// Trims both CR and LF
+	value = strings.TrimSpace(strings.TrimRight(value, "\r\n"))
+	if len(value) > 0 {
+		return value
+	}
+	return def
 }

@@ -23,6 +23,9 @@ type PackFile struct {
 		Client string `json:"client"`
 		Server string `json:"server"`
 	} `json:"env"`
+	Id        string   `json:"id"`
+	Enabled   bool     `json:"enabled"`
+	Hidden    bool     `json:"hidden"`
 	Downloads []string `json:"downloads"`
 	FileSize  uint32   `json:"fileSize"`
 }
