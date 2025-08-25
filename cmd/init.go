@@ -153,7 +153,7 @@ var initCmd = &cobra.Command{
 			Enabled:    enabled,
 			Category:   category,
 			Id:         strings.ToLower(category) + "-" + filepath.Base(filepath.Dir(wd)),
-			UpdateUrl:  "oneclient/generated/" + strings.ToLower(category) + "-" + filepath.Base(filepath.Dir(wd)),
+			UpdateUrl:  "oneclient/generated/" + strings.ToLower(category) + "-" + filepath.Base(filepath.Dir(wd)) + ".mrpack",
 			Index: struct {
 				File       string `toml:"file"`
 				HashFormat string `toml:"hash-format"`
