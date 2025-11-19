@@ -164,6 +164,12 @@ var exportCmd = &cobra.Command{
 					Hidden:    dl.Mod.Hidden,
 					Downloads: []string{u},
 					FileSize:  uint32(fileSize),
+					Overrides: &struct {
+						Icon        string   `json:"icon,omitempty"`
+						Name        string   `json:"name,omitempty"`
+						Authors     []string `json:"authors,omitempty"`
+						Description string   `json:"description,omitempty"`
+					}{Icon: dl.Mod.Overrides.Icon, Name: dl.Mod.Overrides.Name, Authors: dl.Mod.Overrides.Authors, Description: dl.Mod.Overrides.Description},
 				})
 
 				fmt.Printf("%s (%s) added to manifest\n", dl.Mod.Name, dl.Mod.FileName)

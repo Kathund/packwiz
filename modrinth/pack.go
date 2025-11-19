@@ -28,4 +28,10 @@ type PackFile struct {
 	Hidden    bool     `json:"hidden"`
 	Downloads []string `json:"downloads"`
 	FileSize  uint32   `json:"fileSize"`
+	Overrides *struct {
+		Icon        string   `json:"icon,omitempty"`
+		Name        string   `json:"name,omitempty"`
+		Authors     []string `json:"authors,omitempty"`
+		Description string   `json:"description,omitempty"`
+	} `json:"overrides,omitempty"`
 }

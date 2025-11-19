@@ -19,11 +19,14 @@ type Mod struct {
 	Enabled bool   `toml:"enabled"` // Whether the mod is enabled or not
 	Hidden  bool   `toml:"hidden"`  // Whether the mod is hidden in the UI
 	//POLYFROST ADDED FIELDS END
-	Name     string      `toml:"name"`
-	FileName string      `toml:"filename"`
-	Side     string      `toml:"side,omitempty"`
-	Pin      bool        `toml:"pin,omitempty"`
+	Name      string       `toml:"name"`
+	FileName  string       `toml:"filename"`
+	Side      string       `toml:"side,omitempty"`
+	Pin       bool         `toml:"pin,omitempty"`
+	Overrides ModOverrides `toml:"overrides,omitempty"`
+	//POLYFROST ADDED FIELDS START NOW
 	Download ModDownload `toml:"download"`
+	//POLYFROST ADDED FIELDS END
 	// Update is a map of map of stuff, so you can store arbitrary values on string keys to define updating
 	Update     map[string]map[string]interface{} `toml:"update"`
 	updateData map[string]interface{}
@@ -44,6 +47,17 @@ type ModDownload struct {
 	// Mode defaults to modeURL (i.e. use URL when omitted or empty)
 	Mode string `toml:"mode,omitempty"`
 }
+
+// POLYFROST ADDED FIELDS START NOW
+// ModOverrides specifies optional metadata for this mod file
+type ModOverrides struct {
+	Icon        string   `toml:"icon,omitempty"`
+	Name        string   `toml:"name,omitempty"`
+	Authors     []string `toml:"authors,omitempty"`
+	Description string   `toml:"description,omitempty"`
+}
+
+//POLYFROST ADDED FIELDS END
 
 // ModOption specifies optional metadata for this mod file
 type ModOption struct {
