@@ -3,7 +3,7 @@
 
 Get builds via [GitHub Actions](https://github.com/Polyfrost/packwiz/actions) or [nightly.link](https://nightly.link/Polyfrost/packwiz/workflows/go/main)
 
-See [this file](https://github.com/Polyfrost/packwiz/blob/main/format.md) to see roughly what the format looks like.
+See [this file](https://github.com/Polyfrost/DataStorage/blob/main/oneclient/format.md) to see roughly what the format looks like.
 
 ----
 
