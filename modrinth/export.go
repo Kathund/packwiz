@@ -286,7 +286,10 @@ func canBeIncludedDirectly(mod *core.Mod, restrictDomains bool) bool {
 			}
 		}
 	}
-	return false
+	// Normally it'd return false here, but we allow urls so just like yeah whatever
+	fmt.Println("INCLUDING " + mod.Name + " DESPITE AN EXTERNAL URL NOT SUPPORTED BY MRPACK")
+	fmt.Println("Warning: This will make your mod incompatible with the mrpack standard. This is designed for use only within oneclient !!")
+	return true
 }
 
 func init() {
