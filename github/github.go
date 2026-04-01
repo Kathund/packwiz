@@ -59,6 +59,8 @@ type Release struct {
 	URL             string  `json:"url"`
 	TagName         string  `json:"tag_name"`
 	TargetCommitish string  `json:"target_commitish"` // The branch of the release
+	Prerelease      bool    `json:"prerelease"`
+	Draft           bool    `json:"draft"`
 	Name            string  `json:"name"`
 	CreatedAt       string  `json:"created_at"`
 	Assets          []Asset `json:"assets"`

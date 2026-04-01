@@ -8,6 +8,7 @@ import (
 	"github.com/dlclark/regexp2"
 	"github.com/mitchellh/mapstructure"
 	"github.com/packwiz/packwiz/core"
+	"github.com/spf13/viper"
 )
 
 type ghUpdateData struct {
@@ -42,7 +43,7 @@ func (u ghUpdater) CheckUpdate(mods []*core.Mod, pack core.Pack) ([]core.UpdateC
 
 		data := rawData.(ghUpdateData)
 
-		newRelease, err := getLatestRelease(data.Slug, data.Branch)
+		newRelease, err := getLatestRelease(data.Slug, data.Branch, viper.GetBool("update.stable"))
 		if err != nil {
 			results[i] = core.UpdateCheck{Error: fmt.Errorf("failed to get latest release: %v", err)}
 			continue

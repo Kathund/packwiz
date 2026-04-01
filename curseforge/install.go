@@ -420,7 +420,7 @@ func getLatestFile(modInfoData modInfo, mcVersions []string, fileID uint32, pack
 		}
 
 		var fileInfoData *modFileInfo
-		fileID, fileInfoData, _ = findLatestFile(modInfoData, mcVersions, packLoaders)
+		fileID, fileInfoData, _ = findLatestFile(modInfoData, mcVersions, packLoaders, false)
 		if fileInfoData != nil {
 			return *fileInfoData, nil
 		}

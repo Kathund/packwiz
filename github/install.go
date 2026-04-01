@@ -83,7 +83,7 @@ var installCmd = &cobra.Command{
 }
 
 func installMod(repo Repo, branch string, regex string, pack core.Pack) error {
-	latestRelease, err := getLatestRelease(repo.FullName, branch)
+	latestRelease, err := getLatestRelease(repo.FullName, branch, false)
 	if err != nil {
 		return fmt.Errorf("failed to get latest release: %v", err)
 	}
@@ -91,7 +91,7 @@ func installMod(repo Repo, branch string, regex string, pack core.Pack) error {
 	return installRelease(repo, latestRelease, regex, pack)
 }
 
-func getLatestRelease(slug string, branch string) (Release, error) {
+func getLatestRelease(slug string, branch string, stableOnly bool) (Release, error) {
 	var releases []Release
 	var release Release
 
@@ -113,14 +113,30 @@ func getLatestRelease(slug string, branch string) (Release, error) {
 
 	if branch != "" {
 		for _, r := range releases {
+			if stableOnly && (r.Prerelease || r.Draft) {
+				continue
+			}
 			if r.TargetCommitish == branch {
 				return r, nil
 			}
 		}
+		if stableOnly {
+			return release, fmt.Errorf("failed to find stable release for branch %v", branch)
+		}
 		return release, fmt.Errorf("failed to find release for branch %v", branch)
 	}
 
-	return releases[0], nil
+	for _, r := range releases {
+		if stableOnly && (r.Prerelease || r.Draft) {
+			continue
+		}
+		return r, nil
+	}
+
+	if stableOnly {
+		return release, errors.New("failed to find a stable release")
+	}
+	return release, errors.New("failed to find a release")
 }
 
 func installRelease(repo Repo, release Release, regex string, pack core.Pack) error {

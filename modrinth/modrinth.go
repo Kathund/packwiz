@@ -8,6 +8,7 @@ import (
 	"net/url"
 	"regexp"
 	"slices"
+	"strings"
 
 	modrinthApi "codeberg.org/jmansfield/go-modrinth/modrinth"
 	"github.com/packwiz/packwiz/cmd"
@@ -326,8 +327,26 @@ func getLatestVersion(projectID string, name string, pack core.Pack) (*modrinthA
 	if err != nil {
 		return nil, fmt.Errorf("failed to fetch latest version: %w", err)
 	}
+	if viper.GetBool("update.stable") {
+		stableVersions := make([]*modrinthApi.Version, 0, len(result))
+		for _, version := range result {
+			if version.VersionType == nil {
+				stableVersions = append(stableVersions, version)
+				continue
+			}
+
+			versionType := strings.ToLower(*version.VersionType)
+			if versionType == "release" || versionType == "stable" {
+				stableVersions = append(stableVersions, version)
+			}
+		}
+		result = stableVersions
+	}
 	if len(result) == 0 {
 		// TODO: retry with datapack specified, to determine what the issue is? or just request all and filter afterwards
+		if viper.GetBool("update.stable") {
+			return nil, errors.New("no stable versions found\n\tUse --stable=false to allow pre-release versions, or use the 'packwiz settings acceptable-versions' command to accept more game versions")
+		}
 		return nil, errors.New("no valid versions found\n\tUse the 'packwiz settings acceptable-versions' command to accept more game versions\n\tTo use datapacks, add a datapack loader mod and specify the datapack-folder option with the folder this mod loads datapacks from")
 	}
 

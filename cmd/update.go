@@ -223,4 +223,6 @@ func init() {
 
 	UpdateCmd.Flags().BoolP("all", "a", false, "Update all external files")
 	_ = viper.BindPFlag("update.all", UpdateCmd.Flags().Lookup("all"))
+	UpdateCmd.Flags().Bool("stable", false, "Only consider stable/release versions when checking for updates")
+	_ = viper.BindPFlag("update.stable", UpdateCmd.Flags().Lookup("stable"))
 }

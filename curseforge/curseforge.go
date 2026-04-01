@@ -290,13 +290,17 @@ func filterFileInfoLoaderIndex(packLoaders []string, fileInfoData modFileInfo) (
 }
 
 // findLatestFile looks at mod info, and finds the latest file ID (and potentially the file info for it - may be null)
-func findLatestFile(modInfoData modInfo, mcVersions []string, packLoaders []string) (fileID uint32, fileInfoData *modFileInfo, fileName string) {
+func findLatestFile(modInfoData modInfo, mcVersions []string, packLoaders []string, stableOnly bool) (fileID uint32, fileInfoData *modFileInfo, fileName string) {
 	cfMcVersions := getCurseforgeVersions(mcVersions)
 	bestMcVer := -1
 	bestLoaderType := modloaderTypeAny
 
 	// For snapshots, curseforge doesn't put them in GameVersionLatestFiles
 	for _, v := range modInfoData.LatestFiles {
+		if stableOnly && v.FileType != fileTypeRelease {
+			continue
+		}
+
 		mcVerIdx := core.HighestSliceIndex(mcVersions, v.GameVersions)
 		loaderIdx, loaderValid := filterFileInfoLoaderIndex(packLoaders, v)
 
@@ -327,8 +331,11 @@ func findLatestFile(modInfoData modInfo, mcVersions []string, packLoaders []stri
 			bestLoaderType = loaderIdx
 		}
 	}
-	// TODO: manage alpha/beta/release correctly, check update channel?
 	for _, v := range modInfoData.GameVersionLatestFiles {
+		if stableOnly && v.FileType != fileTypeRelease {
+			continue
+		}
+
 		mcVerIdx := slices.Index(cfMcVersions, v.GameVersion)
 		loaderIdx, loaderValid := filterLoaderTypeIndex(packLoaders, v.Modloader)
 
@@ -429,7 +436,7 @@ func (u cfUpdater) CheckUpdate(mods []*core.Mod, pack core.Pack) ([]core.UpdateC
 		}
 		project := projectRaw.(cfUpdateData)
 
-		fileID, fileInfoData, fileName := findLatestFile(modInfos[i], mcVersions, packLoaders)
+		fileID, fileInfoData, fileName := findLatestFile(modInfos[i], mcVersions, packLoaders, viper.GetBool("update.stable"))
 		if fileID != project.FileID && fileID != 0 {
 			// Update (or downgrade, if changing to an older version) available!
 			results[i] = core.UpdateCheck{
