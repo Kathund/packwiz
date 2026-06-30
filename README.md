@@ -1,5 +1,5 @@
 ----
-# Polyfrost fork with additional fields for [OneClient](https://github.com/Polyfrost/OneLauncher)!
+# Polyfrost fork with additional fields for [OneClient](https://github.com/Polyfrost/OneLauncher)
 
 Get builds via [GitHub Actions](https://github.com/Polyfrost/packwiz/actions) or [nightly.link](https://nightly.link/Polyfrost/packwiz/workflows/go/main)
 
